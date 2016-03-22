@@ -80,4 +80,18 @@ OnDraw(function()
 if Ready(_E) then
   DrawCircle(myHeroPos().x,myHeroPos().y,myHeroPos().z,GetCastRange(myHero,_E),3,100,0xFFFFFFFF)
 end
+
+
+if Ready(_Q) then
+  DrawCircle(myHeroPos().x,myHeroPos().y,myHeroPos().z,GetCastRange(myHero,_Q),3,100,GoS.Blue)
+end
+
+
+if Ready(_W) then
+  DrawCircle(myHeroPos().x,myHeroPos().y,myHeroPos().z,GetCastRange(myHero,_W),3,100,GoS.Green)
+end
+
+if Ready(_R) then
+  DrawCircle(myHeroPos().x,myHeroPos().y,myHeroPos().z,GetCastRange(myHero,_R),3,100,GoS.Red)
+end
 end)
