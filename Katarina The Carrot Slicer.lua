@@ -11,10 +11,18 @@ if GetObjectName(myHero) ~= "Katarina" then return end
  Katarina.Combo:Boolean("E", "Use E", true)
  Katarina.Combo:Boolean("R", "Use R", true)
 
+ Katarina:SubMenu("KS",'Killsteal')
+ Katarina.KS:Boolean("Q", "Use Q", true)
+ Katarina.KS:Boolean("E", "Use E", true)
+
  local rChan = false
 
 OnTick(function(myHero)
-if rChan == true then return end
+if rChan ~= false	 then return end
+	Killsteal()
+	if IOW:Mode() == "Combo" then
+		Combo()
+	end
  if IOW:Mode() == "Combo" then
   Combo()
  end
@@ -75,6 +83,25 @@ function Combo()
  end
 
 end
+
+function Killsteal()
+    for i,enemy in pairs(GetEnemyHeroes()) do
+		local QPred = GetPredictionForPlayer(myHeroPos(),enemy,GetMoveSpeed(enemy),math.huge,1000,GetCastRange(myHero, _Q),85,false,true)
+		local ExtraDmg = 0
+		if GotBuff(myHero, "itemmagicshankcharge") > 99 then
+			ExtraDmg = ExtraDmg + 0.1*GetBonusAP(myHero) + 100
+		end
+		if Ready(_Q) and not rChan and ValidTarget(enemy,GetCastRange(myHero,_Q)) and Katarina.KS.Q:Value() and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < CalcDamage(myHero, enemy, 0, 55*GetCastLevel(myHero,_Q)+25+0.8*GetBonusAP(myHero) + ExtraDmg) then
+			if QPred.HitChance == 1 then
+				CastSkillShot(_Q,QPred.PredPos.x,QPred.PredPos.y,QPred.PredPos.z)
+			end
+		end
+		if Ready(_E) and not rChan and ValidTarget(enemy,GetCastRange(myHero,_E)) and Katarina.KS.E:Value() and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < CalcDamage(myHero, enemy, 0, 60*GetCastLevel(myHero,_E)+20+.8*GetBonusAP(myHero) + ExtraDmg) then
+			CastTargetSpell(enemy, _E)
+		end
+	end
+end
+
 
 OnDraw(function()
 if Ready(_E) then
