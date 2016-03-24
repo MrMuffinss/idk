@@ -9,7 +9,6 @@ Shaco:SubMenu('Combo', 'Combo')
 Shaco.Combo:Boolean('Q', 'Use Q', false)
 Shaco.Combo:Boolean('W', 'Use W', true)
 Shaco.Combo:Boolean('E', 'Use E', true)
-Shaco.Combo:Boolean('R', 'Use R', false)
 --Jungle Clear Menu
 Shaco:SubMenu('Jungle', 'JungleClear')
 Shaco.Jungle:Boolean('W', 'Use W', true)
@@ -27,11 +26,39 @@ Shaco.Misc:Boolean("ATR","Auto R <",true)
 Shaco.Misc:Slider("UltHP", "Hp to Auto R", 20, 0, 100, 5)
 
 OnTick(function(myHero)
+if IOW:Mode() == 'Combo' then
+Combo()
+end
 JungleClear()
 LaneClear()
 AutoUltimate()
 
 end)
+
+function Combo()
+local mousepos = GetMousePos()
+local unit = GetCurrentTarget()
+-- GetPredictionForPlayer(startPosition, targetUnit, targetUnitMoveSpeed, spellTravelSpeed, spellDelay, spellRange, spellWidth, collision, addHitBox)
+local Qpos = GetPredictionForPlayer(myHeroPos(),unit,GetMoveSpeed(unit),300,300,GetCastRange(myHero,_Q),250,false,false)
+if Ready(_Q) and IsInDistance(unit, GetCastRange(myHero,_Q)) and Qpos.HitChance == 1 then
+  CastSkillShot(_Q,Qpos.PredPos.x,Qpos.PredPos.y,Qpos.PredPos.z)
+elseif Ready(_Q) and not IsInDistance(unit, GetCastRange(myHero,_Q)) and ValidTarget (unit, 1400) then
+	CastSkillShot(_Q,mousepos.x,mousepos.y,mousepos.z)
+end
+
+
+if Shaco.Combo.W:Value() then
+ if Ready(_W) and ValidTarget(unit, 425) then
+   CastSkillShot(_W,mousepos.x,mousepos.y,mousepos.z)
+ end
+end
+
+if Shaco.Combo.E:Value() then
+ if Ready(_E) and ValidTarget(unit, 625) then
+  CastTargetSpell(unit, _E)
+ end
+end
+end
 
 function JungleClear()
 local mousepos = GetMousePos()
@@ -102,3 +129,4 @@ if Ready(_R) then
   DrawCircle(myHeroPos().x,myHeroPos().y,myHeroPos().z,GetCastRange(myHero,_R),3,100,GoS.Red)
 end
 end)
+
